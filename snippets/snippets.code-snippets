@@ -1,0 +1,269 @@
+{
+  "control": {
+    "prefix": ["ph-control", ";control"],
+    "body": [
+      "!-*- PHASE0 -*-",
+      "control {",
+      "\tcondition = automatic",
+      "\tmax_iteration = 10000000",
+      "\tcpumax = 7 day",
+      "\tsw_vdw_correction = off",
+      "}",
+      ""
+    ],
+    "description": "control block"
+  },
+  "accuracy": {
+    "prefix": ["ph-accuracy", ";accuracy"],
+    "body": [
+      "accuracy {",
+      "\tPAW = on",
+      "!\txctype = PBEsol",
+      "\tcutoff_wf = 25.0 Rydberg",
+      "\tcutoff_cd = 230.0 Rydberg",
+      "\tksampling {",
+      "\t!\tmethod = mesh",
+      "\t\tmesh { nx = ${1:nx}, ny = ${2:ny}, nz = ${3:nz} }",
+      "\t}",
+      "!\tsmearing { method = tetrahedral }",
+      "\tscf_convergence { delta_total_energy = 1.0e-9 }",
+      "\tforce_convergence { max_force = 1.0e-4 }",
+      "\tek_convergence {",
+      "\t\tdelta_eigenvalue = 1.0e-6",
+      "\t\tnum_extra_bands = 8",
+      "\t}",
+      "\tinitial_charge_density = atomic_charge_density",
+      "\tinitial_wavefunctions = atomic_orbitals",
+      "}",
+      ""
+    ],
+    "description": "accuracy settings"
+  },
+  "plusU": {
+    "prefix": ["ph-plusU", ";;hubbard"],
+    "body": [
+      "hubbard {",
+      "\tsw_hubbard = on",
+      "!\tinitial_occmat = file",
+      "!\tocc_matrix_fix_period = 10",
+      "\tprojectors {",
+      "\t#units eV",
+      "\t#tag no ueff",
+      "\t\t1   5.0",
+      "\t\t2   5.0",
+      "\t}",
+      "}",
+    ],
+    "description": "hubbard for DFT+U (put into the accuracy block)"
+  },
+  "projector": {
+    "prefix": ["ph-proj", ";;projector"],
+    "body": [
+      "projector_list {",
+      "\tprojectors {",
+      "\t#tag no group radius l",
+      "\t\t1   1   2.2   2",
+      "\t\t2   2   2.2   2",
+      "\t}",
+      "}",
+    ],
+    "description": "hubbard for DFT+U (put into the accuracy block)"
+  },
+  "hybrid": {
+    "prefix": ["ph-hybrid", ";;hybrid-functional"],
+    "body": [
+      "hybrid_functional {",
+      "\tsw_hybrid_functional = off",
+      "\tfunctional_type = HSE06",
+      "\tsw_rspace = off",
+      "}",
+    ],
+    "description": "hybrid functional (put into the accuracy block)"
+  },
+  "vdwdf": {
+    "prefix": ";;vdwdf",
+    "body": [
+      "xctype = vdwdf2-b86r",
+      "vdwdf { mode = scf }",
+      ""
+    ],
+    "description": "vdW-DF (put into the accuracy block)"
+  },
+  "atomic configuration": {
+    "prefix": ["ph-structure", ";structure"],
+    "body": [
+      "structure {",
+      "\tunit_cell_type = Bravais",
+      "\tunit_cell {",
+      "\t#units angstrom",
+      "\t\ta_vector = 1 0 0",
+      "\t\ta = 10.0",
+      "\t}",
+      "\tsymmetry {",
+      "\t\tmethod = automatic",
+      "\t\ttspace { lattice_system = primitive }",
+      "\t\tsw_inversion = on",
+      "\t}",
+      "\tatom_list {",
+      "\t\tcoordinate_system = cartesian",
+      "\t\tatoms {",
+      "\t\t#default mobile = on",
+      "\t\t#tag element rx ry rz",
+      "\t\t\tSi 0.0  0.0  0.0",
+      "\t\t}",
+      "\t}",
+      "\tmagnetic_state = magnetic",
+      "\telement_list {",
+      "\t\t#tag element atomicnumber zeta",
+      "\t\t\tSi 14",
+      "\t}",
+      "}",
+      ""
+    ],
+    "description": "cell shape and atomic positions"
+  },
+  "solver": {
+    "prefix": ["ph-solver", ";solver"],
+    "body": [
+      "wavefunction_solver {",
+      "\tsolvers {",
+      "\t#tag sol till_n",
+      "\t\tpdavidson  2",
+      "\t\trmm3      -1",
+      "\t}",
+      "\trmm { edelta_change_to_rmm = 1.0e-5 }",
+      "}",
+      "",
+      "charge_mixing {",
+      "\tspin_density_mixfactor = 2",
+      "\tmixing_methods {",
+      "\t#tag method rmxs",
+      "\t\tpulay     0.25",
+      "\t\tbroyden2  0.20",
+      "\t}",
+      "}",
+      ""
+    ],
+    "description": "solver settings"
+  },
+  "structure evolution": {
+    "prefix": ["ph-opt-atom-coords", ";structure-evolution"],
+    "body": [
+      "structure_evolution {",
+      "\tmethod = fire",
+      "\tdt = 45  ! for quench",
+      "\tfire {",
+      "\t\tinitial_dt = 75",
+      "\t\tdtmax = 285",
+      "\t}",
+      "}",
+      ""
+    ],
+    "description": "optimization of fractional coordinates"
+  },
+  "optimize lattice": {
+    "prefix": ["ph-opt-lattice", ";optimize-lattice"],
+    "body": [
+      "structure_evolution {",
+      "\tstress {",
+      "\t\tsw_stress_correction = on",
+      "\t\tdelta_ecut = 1.0 Rydberg",
+      "\t}",
+      "\tlattice {",
+      "\t\tsw_optimize_lattice = on",
+      "\t\tsw_optimize_coords_sametime = on",
+      "\t}",
+      "}",
+      ""
+    ],
+    "description": "lattice optimization with the stress-correction"
+  },
+  "phonon": {
+    "prefix": ["ph-phonon", ";phonon"],
+    "body": [
+      "phonon {",
+      "\tsw_phonon = on",
+      "\tsw_calc_force = on",
+      "\tsw_vibrational_modes = on",
+      "}",
+      ""
+    ],
+    "description": "Phonon analysis for GAMMA point"
+  },
+  "postprocess": {
+    "prefix": ["ph-postprocess", ";postprocess"],
+    "body": [
+      "postprocessing {",
+      "\tdos { sw_dos = on }",
+      "\tworkfunc {",
+      "\t\tsw_workfunc = on",
+      "\t\tsw_add_xc_to_vloc = off",
+      "\t}",
+      "\tcharge {",
+      "\t\tsw_charge_rspace = on",
+      "\t\tsw_add_corecharge_rspace = on",
+      "\t\tpartial_charge {",
+      "\t\t\tsw_partial_charge = on",
+      "\t\t\tErange_min = -0.1 eV",
+      "\t\t\tErange_max = 0.1 eV",
+      "\t\t\tErange_delta = 0.7 eV",
+      "\t\t}",
+      "\t}",
+      "}",
+      ""
+    ],
+    "description": "lattice optimization with the stress-correction"
+  },
+  "epsilon electron": {
+    "prefix": ["ph-epsilon", ";epsilon"],
+    "body": [
+      "epsilon {",
+      "\tsw_epsilon = on",
+      "\trestart = off",
+      "\tcrystal_type = single",
+      "\tfermi_energy { read_fermi = off }",
+      "\tphoton {",
+      "\t\tpolar { ux = 0.0, uy = 0.0, uz = 1.0 }",
+      "\t\tpoynting { px = 0.0, py = 0.0, pz = 0.0 }",
+      "\t\tenergy { low = 0.0, high = 2.2, step = 0.001 }",
+      "\t}",
+      "\ttransition_moment {",
+      "\t\ttype = ks",
+      "\t\tsymmetry = on",
+      "\t}",
+      "\tBZ_integration { method = t }",
+      "!\tband_gap_correction { scissor_operator = 0.0 }",
+      "}",
+      ""
+    ],
+    "description": "dielectric constant (electron)"
+  },
+  "molecular dynaimcs": {
+    "prefix": ["ph-md", ";molecular-dynamics"],
+    "body": [
+      "structure_evolution {",
+      "\tmethod = temperature_control  ! temperature_pressure_control",
+      "\tdt = 0.5 fs",
+      "\tn_md_step = 200",
+      "\ttemperature_control {",
+      "\t\tsw_shift_velocities = on",
+      "\t\tnum_chain = 4",
+      "\t\tthermostat {",
+      "\t\t#tag no temp",
+      "\t\t\t1   300",
+      "\t\t}",
+      "\t}",
+      "\tpressure_control {",
+      "\t\tpressure = 0.0",
+      "\t\tmass_baro = 1",
+      "\t\tm12 = off",
+      "\t\tm13 = off",
+      "\t\tm23 = off",
+      "\t}",
+      "\tpredictor { sw_wf_predictor = on }",
+      "}",
+      ""
+    ],
+    "description": "molecular dynamics (NVT or NPT)"
+  }
+}
