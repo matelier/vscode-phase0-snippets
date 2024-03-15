@@ -1,20 +1,25 @@
 {
   "name": "phase0-snippets",
   "displayName": "PHASE0 Snippets",
-  "icon": "icon.png",
   "description": "PHASE/0 Snippets for VS Code",
   "version": "0.0.1",
+  "publisher": "matelier",
+  "icon": "icon.png",
   "engines": {
     "vscode": "^1.87.0"
   },
   "categories": [
     "Snippets"
   ],
+  "License": "MIT",
+  "homepage": "https://github.com/matelier/vscode-phase0-snippets",
   "repository": {
     "type": "git",
     "url": "https://github.com/matelier/vscode-phase0-snippets"
   },
-  "homepage": "https://github.com/matelier/vscode-phase0-snippets",
+  "url": {
+    "url": "https://github.com/matelier/vscode-phase0-snippets/issues"
+  },
   "contributes": {
     "languages": [
       {
